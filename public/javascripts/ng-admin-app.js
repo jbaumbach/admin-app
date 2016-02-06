@@ -1,4 +1,23 @@
-angular.module('adminApp', ['ui.bootstrap']).
+angular.module('adminApp', ['ngRoute', 'ui.bootstrap']).
+  config(function($routeProvider, $locationProvider) {
+    $routeProvider.
+      when('/', {
+        controller: 'HomeController as home',
+        templateUrl: 'home.html'
+      }).
+      when('/about', {
+        controller: 'AboutController as about',
+        templateUrl: 'about.html'
+      }).
+      otherwise({
+        redirectTo: '/'
+      });
+
+    $locationProvider.html5Mode({
+      enabled: true,
+      requireBase: false
+    });
+  }).
   controller('HomeController', function($http) {
     var home = this;
 
@@ -12,4 +31,7 @@ angular.module('adminApp', ['ui.bootstrap']).
         // oops
       });
 
+  }).
+  controller('AboutController', function($http) {
+    var about = this;
   });

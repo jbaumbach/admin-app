@@ -1,0 +1,21 @@
+<h1>Bootstrap/Angular/Node/Express starter template</h1>
+<p class="lead">Use this template as a way to quickly start any new project.<br> All you get is this homepage HTML document, an Angular controller, and a Node/Express backend.</p>
+<table class="table" ng-cloak>
+    <caption>Current user list from the API</caption>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>User Name</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="user in home.users">
+        <th>{{ user.id }}</th>
+        <th>{{ user.firstName }}</th>
+        <th>{{ user.lastName }}</th>
+        <th>{{ user.username }}</th>
+    </tr>
+    </tbody>
+</table>

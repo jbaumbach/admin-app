@@ -8,6 +8,8 @@ module.exports = function(app) {
   // Pages
   //
   app.get('/', indexController.index);
+  app.get('/home.html', indexController.renderPage('home'));
+  app.get('/about.html', indexController.renderPage('about'));
 
   //
   // API
