@@ -1,6 +1,10 @@
 ## Admin App Template
 
-Shell of a Bootstrap-based admin page.  It uses:
+Shell of a Bootstrap-based admin page.
+
+![Screenshot](public/images/homepage-screenshot.png "Homepage Screenshot")
+
+It uses:
 
 * [Node.js](https://nodejs.org)
 * [Express](http://expressjs.com/)
