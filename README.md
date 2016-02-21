@@ -15,20 +15,20 @@ It uses:
 ### Dev Environment Setup
 
 1. Install node.js from the [main site](https://nodejs.org).  Make sure it works:
-  ```
-$ node -v
-```
+    ```
+    $ node -v
+    ```
 2. Clone this repo into a new directory
-  ```
-$ git clone https://github.com/jbaumbach/admin-app.git myapp
-```
+    ```
+    $ git clone https://github.com/jbaumbach/admin-app.git myapp
+    ```
 3. Go to the directory and install dependencies
-  ```
-$ cd myapp && npm install
-```
+    ```
+    $ cd myapp && npm install
+    ```
 4. Start the node webserver
-  ```
-$ npm start
-```
+    ```
+    $ npm start
+    ```
 5. Open your favorite browser and check out your site:
-> <http://localhost:3000>
+    > <http://localhost:3000>
