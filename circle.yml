@@ -1,0 +1,9 @@
+machine:
+  node:
+    version: 4.2.2
+# Example of deploying to staging server (if 'master' branch checked in)
+#deployment:
+#  staging:
+#    branch: master
+#    heroku:
+#      appname: [heroku-app-name]

@@ -1,21 +1,157 @@
-<h1>Bootstrap/Angular/Node/Express starter template</h1>
-<p class="lead">Use this template as a way to quickly start any new project.<br> All you get is this homepage HTML document, an Angular controller, and a Node/Express backend.</p>
-<table class="table" ng-cloak>
-    <caption>Current user list from the API</caption>
-    <thead>
-    <tr>
-        <th>ID</th>
-        <th>First Name</th>
-        <th>Last Name</th>
-        <th>User Name</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr ng-repeat="user in home.users">
-        <th>{{ user.id }}</th>
-        <th>{{ user.firstName }}</th>
-        <th>{{ user.lastName }}</th>
-        <th>{{ user.username }}</th>
-    </tr>
-    </tbody>
-</table>
+<h1>Theater Location Comparison</h1>
+<div class="panel panel-default">
+    <!-- todo: make this panel collapsable so it's not taking up screen space when not in use -->
+    <div class="panel-heading">
+        Select and upload files to validate theater locations
+    </div>
+    <div class="panel-body">
+        <uib-alert ng-repeat="alert in home.alerts" type="{{alert.type}}" close="home.closeAlert($index)">{{alert.msg}}</uib-alert>
+        <form name="upload-form">
+            <div class="form-group">
+                <label for="bookMyShowFile">Book My Show Data File</label>
+                <input id="bookMyShowFile" type="file" ngf-select ng-model="home.bmsFile" name="bmsFile" ngf-max-size="75MB"></input>
+            </div>
+            <div class="form-group">
+                <label for="cinemaSourceFile">Cinema Source Data File</label>
+                <input id="cinemaSourceFile" type="file" ngf-select ng-model="home.csFile" name="csFile" ngf-max-size="75MB"></input>
+            </div>
+
+            <div class="row">
+                <div class="col-md-1"><button type="submit" class="btn btn-default" ng-click="home.submit()">Submit</button></div>
+                <div class="col-md-2" ng-show="home.showSampleTheaterButton"><button type="button" class="btn btn-info btn-sm" ng-click="home.sample()">Load Sample Data</button></div>
+                <!--<div class="col-md-4"><uib-progressbar ng-show="true" class="progress-striped active" max="100" value="80"><span ng-hide="home.uploadProgress < 10">{{ home.uploadProgress }}%</span></uib-progressbar></div>-->
+                <div class="col-md-4" ng-show="home.uploading"><uib-progressbar class="progress-striped active" max="100" value="home.uploadProgress"><span ng-hide="home.uploadProgress < 10">{{ home.uploadProgress }}%</span></uib-progressbar></div>
+                <div class="col-md-4" ng-hide="home.uploading"><em>{{ home.totalItemsCount || "0" }} current theaters</em></div>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<div ng-cloak ng-show="home.totalItemsCount">
+
+    <form class="form-inline filter-settings">
+        <div class="form-group">
+            <label for="threshold">Distance Threshold (Meters)</label>
+            <input type="number" class="form-control" id="threshold" ng-model="home.threshold" ng-keyup="$event.keyCode == 13 && home.rebuildResults()" placeholder="Meters">
+            <button type="button" class="btn btn-warning" ng-click="home.rebuildResults()">Recheck</button>
+        </div>
+    </form>
+
+    <!--<em>{{ home.totalItemsCount || "0" }} current theaters</em>-->
+
+    <uib-tabset class="theater-tabs">
+        <uib-tab>
+            <uib-tab-heading>Needs Correction <span class="badge">{{home.needsCorrection.length}}</span></uib-tab-heading>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>CS Lat/Lon</th>
+                    <th>BMS Lat/Lon</th>
+                    <th>Distance</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr dir-paginate="theater in home.needsCorrection | itemsPerPage: 20" pagination-id="needsCorrection">
+                    <th>{{ theater.id }}</th>
+                    <td>{{ theater.cs.name }}</td>
+                    <td>{{ theater.csLatLon }}</td>
+                    <td>{{ theater.bmsLatLon }}</td>
+                    <td>{{ theater.originalDistance | number:2 }} meters</td>
+                    <td>
+                        <button type="button" class="btn btn-default" ng-click="home.setNewLocation(theater)">
+                            <span class="glyphicon glyphicon-globe" aria-hidden="true"></span> Map
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <dir-pagination-controls pagination-id="needsCorrection"></dir-pagination-controls>
+            <div ng-hide="home.needsCorrection.length" class="well well-lg"><em>There is no data to show on this tab.</em></div>
+        </uib-tab>
+        <uib-tab>
+            <uib-tab-heading>Corrected <span class="badge">{{home.corrected.length}}</span></uib-tab-heading>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Set To Source</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr dir-paginate="theater in home.corrected | itemsPerPage: 20" pagination-id="corrected">
+                    <th>{{ theater.id }}</th>
+                    <td>{{ theater.cs.name }}</td>
+                    <td>{{ theater.verifiedLocation.source }}</td>
+                    <td>
+                        <button type="button" class="btn btn-default" ng-click="home.uncorrectTheater(theater)">Reset</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <dir-pagination-controls pagination-id="corrected"></dir-pagination-controls>
+            <div ng-hide="home.corrected.length" class="well well-lg"><em>There is no data to show on this tab.</em></div>
+
+            <button type="button" class="btn btn-default"
+                    ng-csv="home.correctedData"
+                    lazy-load="true"
+                    filename="corrected-theaters.csv"
+                    csv-header="['id','name','correct_source','correct_lat','correct_lon']"
+                    ng-show="home.corrected.length">
+                <span class="glyphicon glyphicon-download" aria-hidden="true"></span> Download Corrected
+            </button>
+        </uib-tab>
+        <uib-tab>
+            <uib-tab-heading>Within Tolerance <span class="badge">{{home.withinTolerance.length}}</span></uib-tab-heading>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>CS Lat/Lon</th>
+                    <th>BMS Lat/Lon</th>
+                    <th>Distance</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr dir-paginate="theater in home.withinTolerance | itemsPerPage: 20" pagination-id="withinTolerance">
+                    <th>{{ theater.id }}</th>
+                    <td>{{ theater.cs.name }}</td>
+                    <td>{{ theater.csLatLon }}</td>
+                    <td>{{ theater.bmsLatLon }}</td>
+                    <td>{{ theater.originalDistance | number:2 }} meters</td>
+                </tr>
+                </tbody>
+            </table>
+            <dir-pagination-controls pagination-id="withinTolerance"></dir-pagination-controls>
+            <div ng-hide="home.withinTolerance.length" class="well well-lg"><em>There is no data to show on this tab.</em></div>
+        </uib-tab>
+        <uib-tab>
+            <uib-tab-heading>Unmapped <span class="badge">{{home.unmapped.length}}</span></uib-tab-heading>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Source</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr dir-paginate="theater in home.unmapped | itemsPerPage: 20" pagination-id="unmapped">
+                        <th>{{ theater.id || "[none]" }}</th>
+                        <td>{{ theater.name }}</td>
+                        <td>{{ theater.source }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <dir-pagination-controls pagination-id="unmapped"></dir-pagination-controls>
+            <div ng-hide="home.unmapped.length" class="well well-lg"><em>There is no data to show on this tab.</em></div>
+        </uib-tab>
+    </uib-tabset>
+</div>
+

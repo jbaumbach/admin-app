@@ -10,3 +10,13 @@ a {
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
   display: none !important;
 }
+
+.angular-google-map-container { height: 400px; }
+
+.filter-settings {
+  margin-bottom: 30px;
+}
+
+.theater-tabs .nav-tabs {
+  margin-bottom: 15px;
+}

@@ -4,6 +4,7 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var config = require(process.cwd() + '/config/config');
 
 var app = express();
 var routes = require('./bin/routes')(app);
@@ -41,6 +42,8 @@ if (app.get('env') === 'development') {
   });
 }
 
+console.log(`Running with env: ${app.get('env') || 'not set'}`);
+
 // production error handler
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
@@ -50,6 +53,5 @@ app.use(function(err, req, res, next) {
     error: {}
   });
 });
-
 
 module.exports = app;
