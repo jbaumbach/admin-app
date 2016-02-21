@@ -37,7 +37,7 @@ With support for these deployment options (not required but still pretty cool):
     $ cd myapp && npm install
     ```
 
-1. Set up gulp (removing any existing versions first):
+1. Set up gulp if you don't have it already (removes any existing versions first):
     ```
     $ npm rm --global gulp && npm install --global gulp-cli
     ```
@@ -57,9 +57,11 @@ With support for these deployment options (not required but still pretty cool):
 
 ## Background
 As of this writing, two main technologies have emerged as great candidates to build your single page web-based application.
+
 1. **React**  This technology from Facebook is has high rendering performance on the front end and can build
 "Universal Javascript" applications.  This kind of app allows any url in your app to be rendered by the server
 without having to load and run on the client first!  This is great for SEO.
+
 1. **Angular**  This technology by Google was first on the scene, and therefore has built up a huge amount of support in the
 developer community.  Angular is a complete and opinionated framework, so you have pretty clear instructions on how to
 architect your application and you don't spend much time configuring your environment or having to make a lot of decisions.
@@ -74,16 +76,46 @@ you can write a very complicated site quickly and easily.
 The **gulp** build system is used in this project.  Gulp has been around a long time and there are plugins for just about
 anything you can think of, and it's easy to understand, configure, and use.
 
-You can use ES2015 Javascript on the frontend out of the box.  The babel transpiler is used to generate browser-safe ES5 files for you.
+You can use ES2015 Javascript on the frontend out of the box.  The **babel** transpiler is used to generate browser-safe ES5 files for you.
 Your frontend javascript files are watched and rebuilt after every save.  Refresh your browser to see your changes during development.
 
-The backend API files are watched by nodemon and the server is restarted when changes are noticed.
+The backend API files are watched by **nodemon** and the server is restarted when changes are noticed.
 
 A nice todo would be to get hot-reloading working on the frontend.  This is pretty easy with **webpack's** dev server but a bit more of a
 challenge with Gulp and Express.
 
+### General File Structure
+The files are arranged in typical Node.js and Angular fashion with some minor differences.
+#### Backend
+The backend consists of the Node/Express server that servers your API and all your application assets.
+* **Controllers** are in the /controllers directory and serve your API and render any HTML using EJS.
+* **Routes** are specified in the /bin/routes.js files
+* **EJS** files are found in the /views directory.  Note, all HTML used by the front and back ends are stored here.  A minor
+limitation of this architecture is the requirement to make sure all your Angular deep links are also served as a Node route on
+the server.  Always just serve the index.ejs file.
+
+#### Frontend
+* **Application** files are in the /public/javascripts/application directory, and are served by Express' static file server.
+* **Bower Components** are found in the /public/javscripts/components directory.  Install new components like:
+    ```
+    $ bower install angular --save
+    ```
+    None of these files are checked into source control.  If you have any non-bower libs, put them in the
+    /public/javascripts/application/lib directory.
+
+* **Packages** for development are generated and stored in the /public/javascripts/dev directory.  These are not checked
+into source control.  The build files for distribution are stored in the /public/javascripts/dist directory and ARE
+checked into source control.
+
+### Configuration
+You can pass config variables from your server to your frontend application pretty easily.  The template uses the excellent
+**nconf** module to read settings from environment variables, config files, or command line params.  You specify the
+variables to pass to the frontend in the backend index.js controller.
+
 ### Testing
 Run unit and integration tests to make sure your code is working as expected.  This framework uses **Mocha** and **Should**.
+All your test files are in the /test directory.
+
 #### Backend
 ```
 $ npm test
