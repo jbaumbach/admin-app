@@ -11,7 +11,7 @@ exports.index = function(req, res, next) {
   // Items to pass to the server-side renderer
   //
   var config = {
-    minified: process.env.NODE_ENV !== 'development'
+    development: process.env.NODE_ENV === 'development'
   };
 
   res.render('index', {

@@ -20,7 +20,6 @@ var
 const startPage = 'views/index.ejs';
 const bowerComponents = '\/javascripts\/components\/';
 
-
 //
 // Look for all .js files in the directory /javascripts/components/ in the startPage html file and return an array
 // By selecting specific files, we can grab just the files we need.
@@ -42,7 +41,8 @@ var src = {
 
 var dest = {
   scripts: {
-    all: 'public/javascripts/dist'
+    development: 'public/javascripts/dev',
+    deploy: 'public/javascripts/dist'
   }
 };
 
@@ -56,9 +56,9 @@ gulp.task('build-app-deploy', function() {
       presets: ['es2015']
     }))
     .pipe(uglify())
-    .pipe(concat('wwm.application.js'))
+    .pipe(concat('adm.application.min.js'))
     .pipe(sourcemaps.write('.'))
-    .pipe(gulp.dest(dest.scripts.all))
+    .pipe(gulp.dest(dest.scripts.deploy))
     ;
 });
 
@@ -71,24 +71,25 @@ gulp.task('build-app-dev', function() {
     .pipe(babel({
       presets: ['es2015']
     }))
-    .pipe(concat('wwm.application.js'))
+    .pipe(concat('adm.application.js'))
     .pipe(sourcemaps.write('.'))
-    .pipe(gulp.dest(dest.scripts.all))
+    .pipe(gulp.dest(dest.scripts.development))
     ;
 });
 
 //
-// Build the libraries in the bower components directory
+// Build the libraries in the bower components directory.  Typically only done during deployment since these don't
+// change very often.
 //
 gulp.task('build-components', function() {
   return gulp.src(src.scripts.components)
     .pipe(uglify())
-    .pipe(concat('www.components.js'))
-    .pipe(gulp.dest(dest.scripts.all))
+    .pipe(concat('adm.components.js'))
+    .pipe(gulp.dest(dest.scripts.deploy))
 });
 
 //
-// Run the function that lists the bower components to bundle
+// Run the function that lists the bower components to bundle and output to the console
 //
 gulp.task('list-components', function() {
   console.log(getComponentFiles(startPage));
@@ -118,6 +119,10 @@ gulp.task('default', ['build-app-dev', 'watch'], function() {
 //
 gulp.task('bundle', ['build-app-deploy', 'build-components']);
 
+//
+// Same as "bundle", except generates a cacheBustKey, updates a config file for the specified environment,
+// and checks into git.
+//
 gulp.task('deploy', ['bundle'], function() {
   var config = require(process.cwd() + '/config/config');
 
