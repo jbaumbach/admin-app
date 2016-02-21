@@ -87,14 +87,15 @@ challenge with Gulp and Express.
 ### General File Structure
 The files are arranged in typical Node.js and Angular fashion with some minor differences.
 #### Backend
-The backend consists of the Node/Express server that servers your API and all your application assets.
+The backend consists of the Node/Express server that serves your API and all your application assets.
 * **Controllers** are in the /controllers directory and serve your API and render any HTML using EJS.
-* **Routes** are specified in the /bin/routes.js files
+* **Routes** are specified in the /bin/routes.js file
 * **EJS** files are found in the /views directory.  Note, all HTML used by the front and back ends are stored here.  A minor
 limitation of this architecture is the requirement to make sure all your Angular deep links are also served as a Node route on
 the server.  Always just serve the index.ejs file.
 
 #### Frontend
+The frontend consists of all the assets required to show your SPA to the user.
 * **Application** files are in the /public/javascripts/application directory, and are served by Express' static file server.
 * **Bower Components** are found in the /public/javscripts/components directory.  Install new components like:
     ```
@@ -105,7 +106,7 @@ the server.  Always just serve the index.ejs file.
 
 * **Packages** for development are generated and stored in the /public/javascripts/dev directory.  These are not checked
 into source control.  The build files for distribution are stored in the /public/javascripts/dist directory and ARE
-checked into source control.
+checked into source control because Heroku.
 
 ### Configuration
 You can pass config variables from your server to your frontend application pretty easily.  The template uses the excellent
@@ -137,7 +138,8 @@ $ gulp deploy -e staging
 ```
 
 What this does is:
-* Generate minified versions (with sourcemaps!) of your frontend files
+* Generate minified versions (with sourcemaps!) of your frontend files.  They're all packed into two files, one for your
+libs and one for your application files.
 * Generates a cache-busting key used by the index.ejs file to make sure your users always use the latest version of your SPA
 * Checks all this stuff into Git
 
@@ -153,7 +155,7 @@ deploy your application to Heroku if the tests pass.  A sample **circle.yml** fi
 There's also some commented-out code in the file that will push your code to Heroku!
 
 ## Troubleshooting Dev Setup
-Sometimes, even in the best of templates, things go wrong!  Here are some possible solutions if you run into trouble.
+Sometimes, even in the best of templates, things go wrong.  Here are some possible solutions if you run into trouble.
 ### "bower install" complains about connection refused to Github
 ```
 $ git config --global url."https://".insteadOf git://
