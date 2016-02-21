@@ -47,6 +47,21 @@ var dest = {
 };
 
 //
+// Development build - should be exactly the same as build-app-deploy except without the minification step
+//
+gulp.task('build-app-dev', function() {
+  return gulp.src(src.scripts.app)
+    .pipe(sourcemaps.init())
+    .pipe(babel({
+      presets: ['es2015']
+    }))
+    .pipe(concat('adm.application.js'))
+    .pipe(sourcemaps.write('.'))
+    .pipe(gulp.dest(dest.scripts.development))
+    ;
+});
+
+//
 // Build all files for deploying to a remote server
 //
 gulp.task('build-app-deploy', function() {
@@ -59,21 +74,6 @@ gulp.task('build-app-deploy', function() {
     .pipe(concat('adm.application.min.js'))
     .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest(dest.scripts.deploy))
-    ;
-});
-
-//
-// Development build - should be exactly the same as build-app-deploy except without the minification step
-//
-gulp.task('build-app-dev', function() {
-  return gulp.src(src.scripts.app)
-    .pipe(sourcemaps.init())
-    .pipe(babel({
-      presets: ['es2015']
-    }))
-    .pipe(concat('adm.application.js'))
-    .pipe(sourcemaps.write('.'))
-    .pipe(gulp.dest(dest.scripts.development))
     ;
 });
 
@@ -121,7 +121,7 @@ gulp.task('bundle', ['build-app-deploy', 'build-components']);
 
 //
 // Same as "bundle", except generates a cacheBustKey, updates a config file for the specified environment,
-// and checks into git.
+// and checks into git.  Note: this checks everything into git, even files you may be developing!
 //
 gulp.task('deploy', ['bundle'], function() {
   var config = require(process.cwd() + '/config/config');
