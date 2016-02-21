@@ -160,3 +160,11 @@ Sometimes, even in the best of templates, things go wrong.  Here are some possib
 ```
 $ git config --global url."https://".insteadOf git://
 ```
+
+## Todo
+These items are in the works for when there's time.
+* Login support with the "passport" Node middleware.  LocalStrategy only at first, but also support Google and FB login.
+* Create login modal dialog box
+* Store users in Firebase and call out from the backend API
+* Authorization for API, based on a token or session id
+* Caching of API calls in memcached, both anonymous and user-specific
