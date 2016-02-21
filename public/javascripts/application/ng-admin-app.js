@@ -30,8 +30,16 @@ angular.module('adminApp', ['ngRoute', 'ui.bootstrap', 'angularUtils.directives.
 
     console.log('in homecontroller');
 
+    //
+    // Grab list of users from the backend
+    //
+    $http({ method: 'GET', url: '/api/v1/users'}).
+    then(function success(response) {
+      home.users = response.data.results;
+    }, function error(err) {
+      // oops
+    });
 
-    //home.sample();
   }]).
   controller('AboutController', ['$http',
   function($http) {

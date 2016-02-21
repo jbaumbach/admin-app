@@ -26,14 +26,47 @@ It uses:
 
 1. Set up gulp (removing any existing versions first):
     ```
-    $ npm rm --global gulp
-    $ npm install --global gulp-cli
+    $ npm rm --global gulp && npm install --global gulp-cli
     ```
 
-1. Start nodemon and the frontend file watcher:
+1. Start nodemon and the frontend file watcher during development:
     ```
-    $ gulp
+    $ npm run dev
     ```
 
 1. Open your favorite browser and check out your site:
     > <http://localhost:3000>
+
+### Development
+Your front end javascript files are watched and rebuilt after every save.  Refresh your browser to see your changes during development.
+
+todo: get the hotreloading working
+
+todo: store development-built files in a git-ignored directory.
+
+### Testing
+Run unit and integration tests to make sure your code is working as expected.
+#### Backend
+```
+$ npm test
+```
+
+#### Frontend
+todo: implement front end testing framework
+
+(great tips but from 1 yr ago: http://developer.telerik.com/featured/planning-front-end-javascript-application/)
+
+### Deployment
+Deployment to Heroku requires all build files to be checked in to Git.  Use this task to make it easy:
+```
+$ gulp deploy -e staging
+```
+Down the road, CircleCI can be used to automatically deploy to Heroku if the tests pass.  For now, manually push
+to production.
+
+### Troubleshooting Dev Setup
+
+#### "bower install" complains about connection refused to Github
+```
+$ git config --global url."https://".insteadOf git://
+```
