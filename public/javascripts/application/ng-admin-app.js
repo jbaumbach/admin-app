@@ -28,8 +28,6 @@ angular.module('adminApp', ['ngRoute', 'ui.bootstrap', 'angularUtils.directives.
   function($http, utils, $uibModal) {
     var home = this;
 
-    console.log('in homecontroller');
-
     //
     // Grab list of users from the backend
     //
