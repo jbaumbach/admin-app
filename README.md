@@ -14,21 +14,26 @@ It uses:
 
 ### Dev Environment Setup
 
-1. Install node.js from the [main site](https://nodejs.org).  Make sure it works:
-    ```
-    $ node -v
-    ```
-2. Clone this repo into a new directory
+1. Clone this repo into a new directory
     ```
     $ git clone https://github.com/jbaumbach/admin-app.git myapp
     ```
-3. Go to the directory and install dependencies
+
+1. Go to the directory and install dependencies
     ```
     $ cd myapp && npm install
     ```
-4. Start the node webserver
+
+1. Set up gulp (removing any existing versions first):
     ```
-    $ npm start
+    $ npm rm --global gulp
+    $ npm install --global gulp-cli
     ```
-5. Open your favorite browser and check out your site:
+
+1. Start nodemon and the frontend file watcher:
+    ```
+    $ gulp
+    ```
+
+1. Open your favorite browser and check out your site:
     > <http://localhost:3000>

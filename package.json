@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www",
+    "start": "gulp",
     "test": "mocha --recursive",
     "postinstall": "./node_modules/bower/bin/bower install"
   },
@@ -18,9 +18,7 @@
     "morgan": "~1.6.1",
     "nconf": "^0.8.4",
     "serve-favicon": "~2.3.0",
-    "underscore": "^1.8.3",
-    "xlsx": "^0.8.0",
-    "xml2js": "^0.4.16"
+    "underscore": "^1.8.3"
   },
   "devDependencies": {
     "babel-preset-es2015": "^6.5.0",
