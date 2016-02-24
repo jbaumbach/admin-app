@@ -84,7 +84,7 @@ gulp.task('build-app-deploy', function() {
 gulp.task('build-components', function() {
   return gulp.src(src.scripts.components)
     .pipe(uglify())
-    .pipe(concat('adm.components.js'))
+    .pipe(concat('adm.components.min.js'))
     .pipe(gulp.dest(dest.scripts.deploy))
 });
 
@@ -146,14 +146,5 @@ gulp.task('deploy', ['bundle'], function() {
 
     console.log(`Saved config file with cacheBustValue of: ${cacheBustValue}`);
 
-    //
-    // Everything is done building - check in to Git for Heroku
-    //
-    var result = shell.exec(`git commit -am "Build and deploy to environment: ${program.environment}"`).code;
-    if (result === 0) {
-      console.log(`All files generated and committed to git.  You can now deploy to Heroku.`);
-    } else {
-      console.log('Got git error - aborting');
-    }
   });
 });
