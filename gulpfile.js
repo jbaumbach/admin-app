@@ -12,6 +12,7 @@ var
   , program = require('commander')
   , configUtilities = require(process.cwd() + '/config/config-utilities')
   , shell = require('shelljs')
+  , path = require('path')
 ;
 
 // todo: implement live es2015 transpiling during dev using gulp-connect
@@ -114,6 +115,82 @@ gulp.task('default', ['build-app-dev', 'watch'], function() {
   });
 });
 
+gulp.task('gitcheckin', function() {
+  //
+  // Everything is done building - check in to Git for Heroku
+  //
+  var result = shell.exec(`git commit -am "Build and deploy to environment: ${program.environment}"`).code;
+  if (result === 0) {
+    console.log(`All files committed to git.  You can now deploy to Heroku.`);
+  } else {
+    console.log('Got git error - aborting');
+  }
+});
+
+gulp.task('dockerize', function(done) {
+
+  function logInspect(result) {
+    if (false) {
+      console.log(util.inspect(result));
+    }
+  }
+
+  if (!shell.which('docker')) {
+    console.log(`Oops, can't find docker!  Make sure to install it.\nCheckout the guide: https://nodejs.org/en/docs/guides/nodejs-docker-webapp/`);
+    done();
+    return;
+  }
+
+  if (!process.env.DOCKER_HOST) {
+    console.log(`Oops, docker appears to be installed but this shell isn't enabled. If you're on OSX, be sure to run this first:\n\teval "$(docker-machine env default)"`);
+    done();
+    return;
+  }
+
+  var originalDir = process.cwd();
+  var tempDirPath = require('os').tmpdir();
+  var tempBuildDir = `admin-app-build-${(new Date).valueOf()}`;
+  var fullDir = path.join(tempDirPath, tempBuildDir);
+
+  var dockerImageName = 'admin-app/sample-build';
+  var exampleLocalPort = 49160;
+  var exampleInstanceName = 'web';
+
+  // Get git origin
+  console.log('Note: all files must already be pushed to origin/master');
+  var gitOrigin = shell.exec(`git config --get remote.origin.url`).output.trim();
+
+  console.log(`Cloning from "${gitOrigin}" into build directory "${fullDir}"`);
+  logInspect(shell.exec(`git clone ${gitOrigin} ${fullDir}`));
+  logInspect(shell.cd(fullDir));
+  logInspect(shell.ls());
+
+  console.log('NPM Install...');
+  logInspect(shell.exec('npm install'));
+
+  console.log('Building deployable files (staging)...');
+  logInspect(shell.exec('gulp deploy -e staging'));
+
+  // Just in case - stop and remove any running/existing instances/images
+  var stopCommand = `docker stop ${exampleInstanceName} && docker rm ${exampleInstanceName}`;
+  logInspect(shell.exec(stopCommand));
+  logInspect(shell.exec(`docker rmi -f ${dockerImageName}`));
+
+  console.log(`Building docker image "${dockerImageName}"...`);
+  logInspect(shell.exec(`docker build -t ${dockerImageName} .`));
+
+  // Cleanup
+  console.log(`Cleaning up build files from "${fullDir}"...`);
+  logInspect(shell.cd(originalDir));
+  logInspect(shell.rm('-rf', fullDir));
+
+  console.log(`Docker build complete.`);
+  var exampleLaunchCommand = `docker run -p ${exampleLocalPort}:3000 --name ${exampleInstanceName} --env NODE_ENV=staging ${dockerImageName}`;
+  console.log(`You can launch an instance with:\n\t${exampleLaunchCommand}\n\n`);
+  console.log(`You can stop the instance with:\n\t${stopCommand}\n\n`);
+
+});
+
 //
 // Build everything for deployment to a non-dev server
 //
@@ -123,7 +200,7 @@ gulp.task('bundle', ['build-app-deploy', 'build-components']);
 // Same as "bundle", except generates a cacheBustKey, updates a config file for the specified environment,
 // and checks into git.  Note: this checks everything into git, even files you may be developing!
 //
-gulp.task('deploy', ['bundle'], function() {
+gulp.task('deploy', ['bundle'], function(done) {
   var config = require(process.cwd() + '/config/config');
 
   //
@@ -143,8 +220,7 @@ gulp.task('deploy', ['bundle'], function() {
 
   var cacheBustValue = (new Date).valueOf();
   configUtilities.persistConfigValue(program.environment, 'cacheBustKey', cacheBustValue, function(err) {
-
     console.log(`Saved config file with cacheBustValue of: ${cacheBustValue}`);
-
+    done();
   });
 });
