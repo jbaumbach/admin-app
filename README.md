@@ -24,6 +24,7 @@ With support for these deployment options (not required but still pretty cool):
 
 * [Heroku](https://www.heroku.com/)
 * [CircleCI](https://circleci.com/)
+* [Docker](https://www.docker.com/)
 
 ## Quick Start
 
