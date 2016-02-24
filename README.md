@@ -149,6 +149,13 @@ Then, once you add your Heroku app as a remote to your local git, you can deploy
 $ git push heroku
 ```
 
+## Docker
+If you have docker installed, you can create a docker image with the command:
+```
+$ gulp dockerize
+```
+This will create an image "admin-app/sample-build" with port 3000 exposed as the main website.
+
 ## Continuous Integration
 A better solution than deploying from your workstation (for multiple developers at least!) is to use an automated
 continuous integration process.  **CircleCI** is a nice cloud-based CI solution, and it can be configured to automatically
