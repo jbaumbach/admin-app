@@ -127,7 +127,7 @@ $ npm test
 An essential todo down the road is to implement a front end testing framework.  Angular is built from the ground
 up with dependency injection (DI) in mind, so it's easy to get unit testing up and running.
 
-## Deployment
+## Deploying to Heroku
 The template is set up with deployment to Heroku in mind.  As such, there's a **Procfile** for you and the deployment
 strategy takes into account the need to check in all your application files to Git.
 
@@ -149,18 +149,60 @@ Then, once you add your Heroku app as a remote to your local git, you can deploy
 $ git push heroku
 ```
 
-## Docker
-If you have docker installed, you can create a docker image with the command:
-```
-$ gulp dockerize
-```
-This will create an image "admin-app/sample-build" with port 3000 exposed as the main website.
-
 ## Continuous Integration
 A better solution than deploying from your workstation (for multiple developers at least!) is to use an automated
 continuous integration process.  **CircleCI** is a nice cloud-based CI solution, and it can be configured to automatically
 deploy your application to Heroku if the tests pass.  A sample **circle.yml** file is provided to build your app and test it.
 There's also some commented-out code in the file that will push your code to Heroku!
+
+## Docker
+You can create a portable image of your site with Docker.
+1. Make sure all your changes are done and checked into your repo's origin/master.
+1. Build the docker image from origin/master:
+    ```
+    $ gulp dockerize
+    ```
+This will create an image "admin-app/sample-build" with port 3000 exposed as the main website.
+
+### Deploying Your Docker Image to Amazon AWS
+If you have an AWS account, you can deploy your docker image without too much bother.  To deploy to AWS:
+1. Build the docker image as described above.
+1. Create an AWS instance of Linux (see: http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/launching-instance.html)
+1. Ultimately your image needs to get to your Linux instance.  This is a very basic way to do it quickly using S3 as your
+intermediate repository.  The official way is to use a paid private repository, but this is free and easy.  Export the docker
+image as a .tar file:
+    ```
+    $ docker save -o admin-app-sample-build.tar admin-app/sample-build
+    ```
+1. Upload the .tar file to an S3 container and make it public.
+1. SSH into your AWS Linux instance and install docker.
+    ```
+    $ ssh -i yourkeyfile.pem ec2-user@publicdns.us-west-2.compute.amazonaws.com
+
+           __|  __|_  )
+           _|  (     /   Amazon Linux AMI
+          ___|\___|___|
+
+    $ sudo yum install -y docker
+    ...
+    $ sudo service docker start
+    ...
+
+    ```
+1. Download the .tar file from S3 with your public link:
+    ```
+    $ wget https://s3-us-west-2.amazonaws.com/yourcontainer/admin-app-sample-build.tar
+    ```
+1. Load your .tar into your local docker repository:
+    ```
+    $ docker load < admin-app-sample-build.tar
+    ```
+1. Fire up our app!
+    ```
+    $ docker run -p 80:3000 --name web --env NODE_ENV=staging admin-app/sample-build
+    ```
+1. Open up a browser and put in your AWS instance's url:
+    > http://publicdns.us-west-2.compute.amazonaws.com/
 
 ## Troubleshooting Dev Setup
 Sometimes, even in the best of templates, things go wrong.  Here are some possible solutions if you run into trouble.
