@@ -166,6 +166,7 @@ This will create an image "admin-app/sample-build" with port 3000 exposed as the
 
 ### Deploying Your Docker Image to Amazon AWS
 If you have an AWS account, you can deploy your docker image without too much bother.  To deploy to AWS:
+
 1. Build the docker image as described above.
 1. Create an AWS instance of Linux (see: http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/launching-instance.html)
 1. Ultimately your image needs to get to your Linux instance.  This is a very basic way to do it quickly using S3 as your
@@ -174,6 +175,7 @@ image as a .tar file:
     ```
     $ docker save -o admin-app-sample-build.tar admin-app/sample-build
     ```
+
 1. Upload the .tar file to an S3 container and make it public.
 1. SSH into your AWS Linux instance and install docker.
     ```
@@ -189,18 +191,22 @@ image as a .tar file:
     ...
 
     ```
+
 1. Download the .tar file from S3 with your public link:
     ```
     $ wget https://s3-us-west-2.amazonaws.com/yourcontainer/admin-app-sample-build.tar
     ```
+
 1. Load your .tar into your local docker repository:
     ```
     $ docker load < admin-app-sample-build.tar
     ```
+
 1. Fire up our app!
     ```
     $ docker run -p 80:3000 --name web --env NODE_ENV=staging admin-app/sample-build
     ```
+
 1. Open up a browser and put in your AWS instance's url:
     > http://publicdns.us-west-2.compute.amazonaws.com/
 
