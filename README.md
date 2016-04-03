@@ -157,12 +157,15 @@ There's also some commented-out code in the file that will push your code to Her
 
 ## Docker
 You can create a portable image of your site with Docker.
+
 1. Make sure all your changes are done and checked into your repo's origin/master.
 1. Build the docker image from origin/master:
+
     ```
     $ gulp dockerize
     ```
-This will create an image "admin-app/sample-build" with port 3000 exposed as the main website.
+    
+    This will create an image "admin-app/sample-build" with port 3000 exposed as the main website.
 
 ### Deploying Your Docker Image to Amazon AWS
 If you have an AWS account, you can deploy your docker image without too much bother.  To deploy to AWS:
