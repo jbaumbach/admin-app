@@ -114,18 +114,6 @@ gulp.task('default', ['build-app-dev', 'watch'], function() {
   });
 });
 
-gulp.task('gitcheckin', function() {
-  //
-  // Everything is done building - check in to Git for Heroku
-  //
-  var result = shell.exec(`git commit -am "Build and deploy to environment: ${program.environment}"`).code;
-  if (result === 0) {
-    console.log(`All files committed to git.  You can now deploy to Heroku.`);
-  } else {
-    console.log('Got git error - aborting');
-  }
-});
-
 gulp.task('dockerize', function(done) {
 
   function logInspect(result) {
