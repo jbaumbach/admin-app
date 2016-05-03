@@ -6,14 +6,15 @@ angular.module('adminApp', ['ngRoute', 'ui.bootstrap', 'angularUtils.directives.
     $routeProvider.
       when('/', {
         controller: 'HomeController as home',
-        templateUrl: 'home.html'
+        templateUrl: '/views/home.html'
       }).
       when('/about', {
         controller: 'AboutController as about',
-        templateUrl: 'about.html'
+        templateUrl: '/views/about.html'
       }).
       otherwise({
-        redirectTo: '/'
+        controller: '404Controller as errorPage',
+        templateUrl: '/views/404.html'
       });
 
     //
@@ -42,4 +43,9 @@ angular.module('adminApp', ['ngRoute', 'ui.bootstrap', 'angularUtils.directives.
   controller('AboutController', ['$http',
   function($http) {
     var about = this;
+  }]).
+  controller('404Controller', ['$location',
+  function($location) {
+    var errorPage = this;
+    errorPage.page = $location.absUrl();
   }]);

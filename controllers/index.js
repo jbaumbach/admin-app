@@ -11,7 +11,8 @@ exports.index = function(req, res, next) {
   // Items to pass to the server-side renderer
   //
   var config = {
-    development: process.env.NODE_ENV === 'development'
+    minified: process.env.NODE_ENV !== 'development',
+    jsDir: process.env.NODE_ENV === 'development' ? 'dev' : 'dist'
   };
 
   res.render('index', {
@@ -20,13 +21,4 @@ exports.index = function(req, res, next) {
     frontEndConfig: JSON.stringify(frontEndConfig),
     config: config
   });
-};
-
-//
-// Generic helper function to render the passed file with title
-//
-exports.renderPage = function(pageFile, title) {
-  return function(req, res, next) {
-    res.render(pageFile, { title: title || 'Untitled Application' });
-  }
 };

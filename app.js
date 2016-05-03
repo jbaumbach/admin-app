@@ -5,53 +5,62 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var config = require(process.cwd() + '/config/config');
+var indexController = require(process.cwd() + '/controllers/index');
 
 var app = express();
-var routes = require('./bin/routes')(app);
-
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+//
+// API Routes
+//
+var routes = require('./bin/routes')(app);
+
+//
+// All assets in "public" directory served by static file server
+//
 app.use(express.static(path.join(__dirname, 'public')));
 
-// catch 404 and forward to error handler
+//
+// Web Pages - server-rendered view engine setup
+//
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
+
+//
+// All routes not API and static get the index page so Angular can handle the route
+//
 app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
+  if (req.path.match(/\/api\/v[0-9]*\//)) {
+    // catch 404 and forward to error handler
+    var err = new Error('Not Found');
+    err.status = 404;
+    next(err);
+  } else {
+    indexController.index(req, res);
+  }
 });
 
+//
 // error handlers
-
-// development error handler
-// will print stacktrace
-if (app.get('env') === 'development') {
-  app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    res.render('error', {
-      message: err.message,
-      error: err
-    });
-  });
-}
-
-console.log(`Running with env: ${app.get('env') || 'not set'}`);
-
-// production error handler
-// no stacktraces leaked to user
+//
+// production error handler - no stacktraces leaked to user
+// development error handler - will print stacktrace
+//
 app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error', {
     message: err.message,
-    error: {}
+    error: app.get('env') === 'development' ? err : {}
   });
 });
+
+console.log(`Running with env: ${app.get('env') || 'not set'}`);
 
 module.exports = app;

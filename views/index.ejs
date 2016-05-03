@@ -47,21 +47,18 @@
             </div>
         </div><!-- /.container -->
 
-        <% if (config.development) { %>
+        <% if (!config.minified) { %>
             <!-- Bower components -->
             <script src="/javascripts/components/angular/angular.js"></script>
             <script src="/javascripts/components/angular-resource/angular-resource.js"></script>
             <script src="/javascripts/components/angular-route/angular-route.js"></script>
             <script src='/javascripts/components/angular-utils-pagination/dirPagination.js'></script>
-
-            <!-- Our application -->
-            <script src="/javascripts/dev/adm.application.js"></script>
         <% } else { %>
-            <!-- Minified and concat'd versions of application and components -->
-            <script src="/javascripts/dist/adm.components.min.js?ts=<%=cacheBustKey%>"></script>
-            <script src="/javascripts/dist/adm.application.min.js?ts=<%=cacheBustKey%>"></script>
+        <!-- Minified and concat'd versions of application and components -->
+        <script src="/javascripts/<%=config.jsDir%>/www.components.js?ts=<%=cacheBustKey%>"></script>
         <% } %>
 
+        <script src="/javascripts/<%=config.jsDir%>/adm.application.js?ts=<%=cacheBustKey%>"></script>
 
         <!-- Non-local items loaded from CDN -->
         <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/1.1.2/ui-bootstrap-tpls.js"></script>
