@@ -42,6 +42,7 @@ GLOBAL.Config
 // Set all defaults here - use these if not found in any source above
 //
 nconf.defaults({
+  "host": "http://localhost:3000",
   "REDISCLOUD_URL": "localhost:6379"
 });
 
