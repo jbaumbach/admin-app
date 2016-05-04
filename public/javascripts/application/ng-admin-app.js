@@ -24,7 +24,7 @@ angular.module('adminApp', ['ngRoute', 'ui.bootstrap', 'angularUtils.directives.
       enabled: true,
       requireBase: false
     });
-}]).
+  }]).
   controller('HomeController', ['$http', 'utils', '$uibModal',
   function($http, utils, $uibModal) {
     var home = this;
@@ -44,8 +44,18 @@ angular.module('adminApp', ['ngRoute', 'ui.bootstrap', 'angularUtils.directives.
   function($http) {
     var about = this;
   }]).
+  controller('NavController', ['User',
+  function(User) {
+    var nav = this;
+    nav.user = User;
+  }]).
   controller('404Controller', ['$location',
   function($location) {
     var errorPage = this;
     errorPage.page = $location.absUrl();
+  }]).
+  factory('User', [
+  function() {
+    var userFactory = globalConfig.user || {};
+    return userFactory;
   }]);

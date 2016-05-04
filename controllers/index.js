@@ -4,7 +4,8 @@ exports.index = function(req, res, next) {
   // All items you want to pass from the server to the front end app
   //
   var frontEndConfig = {
-    sampleConfigItem: 32
+    sampleConfigItem: 32,
+    user: req.user || {}
   };
 
   //

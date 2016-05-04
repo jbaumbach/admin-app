@@ -16,8 +16,11 @@
     "debug": "~2.2.0",
     "ejs": "~2.3.3",
     "express": "~4.13.1",
+    "express-session": "^1.13.0",
     "morgan": "~1.6.1",
     "nconf": "^0.8.4",
+    "passport": "^0.3.2",
+    "passport-goodreads": "^1.0.0",
     "serve-favicon": "~2.3.0",
     "underscore": "^1.8.3"
   },
